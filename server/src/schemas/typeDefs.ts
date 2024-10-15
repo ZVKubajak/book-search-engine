@@ -2,12 +2,21 @@ import gql from "graphql-tag";
 
 const typeDefs = gql`
   type User {
-    _id: ID
-    username: String
-    email: String
-    password: String
-    savedBooks: [BookDocument]!
-    bookCount: Int!
+    _id: ID!
+    username: String!
+    email: String!
+    password: String!
+    savedBooks: [BookDocument]
+    bookCount: Int
+  }
+
+  type BookDocument {
+    bookId: String!
+    title: String!
+    authors: [String]
+    description: String
+    image: String
+    link: String
   }
 
   type Auth {
@@ -19,6 +28,15 @@ const typeDefs = gql`
     username: String!
     email: String!
     password: String!
+  }
+
+  input BookInput {
+    bookId: String!
+    title: String!
+    authors: [String]
+    description: String
+    image: String
+    link: String
   }
 
   type Query {

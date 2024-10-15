@@ -1,4 +1,5 @@
 import User, { UserDocument } from "../models/User";
+import { BookDocument } from "../models/Book";
 import { signToken, AuthenticationError } from "../utils/auth";
 
 interface UserArgs {
@@ -11,16 +12,6 @@ interface CreateUserArgs {
     email: string;
     password: string;
   };
-}
-
-interface SaveBookArgs {
-  userId: string;
-  book: string;
-}
-
-interface DeleteBookArgs {
-  userId: string;
-  book: string;
 }
 
 interface Context {
@@ -55,7 +46,7 @@ const resolvers = {
       { input }: CreateUserArgs
     ): Promise<{ token: string; user: UserDocument }> => {
       const user = await User.create({ ...input });
-      const token = signToken(user.username, user.email, user._id);
+      const token = signToken(user.username, user.email, user._id); // ! PASSWORD ! //
       return { token, user };
     },
     login: async (
@@ -70,18 +61,18 @@ const resolvers = {
       if (!correctPassword) {
         throw AuthenticationError;
       }
-      const token = signToken(user.username, user.email, user.password);
+      const token = signToken(user.username, user.email, user.password); // ! PASSWORD ! //
       return { token, user };
     },
     saveBook: async (
       _parent: any,
-      { userId, book }: SaveBookArgs,
+      { bookData }: { bookData: BookDocument },
       context: Context
     ): Promise<UserDocument | null> => {
       if (context.user) {
         return await User.findOneAndUpdate(
-          { _id: userId },
-          { $addToSet: { books: book } },
+          { _id: context.user._id },
+          { $addToSet: { books: bookData } },
           {
             new: true,
             runValidators: true,
@@ -92,13 +83,13 @@ const resolvers = {
     },
     deleteBook: async (
       _parent: any,
-      { userId, book }: DeleteBookArgs,
+      { bookId }: { bookId: string },
       context: Context
     ): Promise<UserDocument | null> => {
       if (context.user) {
         return await User.findOneAndUpdate(
-          { _id: userId },
-          { $pull: { books: book } },
+          { _id: context.user._id },
+          { $pull: { books: bookId } },
           { new: true }
         );
       }
