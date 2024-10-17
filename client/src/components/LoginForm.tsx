@@ -3,9 +3,12 @@ import { useState } from 'react';
 import type { ChangeEvent, FormEvent } from 'react';
 import { Form, Button, Alert } from 'react-bootstrap';
 
-import { loginUser } from '../utils/API';
-import Auth from '../utils/auth';
+// import { loginUser } from '../utils/API';
+// import Auth from '../utils/auth';
 import type { User } from '../models/User';
+
+import { useMutation } from '@apollo/client';
+import { LOGIN } from '../utils/mutations';
 
 // biome-ignore lint/correctness/noEmptyPattern: <explanation>
 const LoginForm = ({}: { handleModalClose: () => void }) => {
@@ -28,15 +31,12 @@ const LoginForm = ({}: { handleModalClose: () => void }) => {
       event.stopPropagation();
     }
 
+    // * Mutation * //
+    const [login, { error }] = useMutation(LOGIN);
+
     try {
-      const response = await loginUser(userFormData);
-
-      if (!response.ok) {
-        throw new Error('something went wrong!');
-      }
-
-      const { token } = await response.json();
-      Auth.login(token);
+      // const response = await loginUser(userFormData);
+      await login(); // ! Variables?
     } catch (err) {
       console.error(err);
       setShowAlert(true);
