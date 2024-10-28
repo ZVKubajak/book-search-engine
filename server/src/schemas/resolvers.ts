@@ -1,6 +1,6 @@
-import User, { UserDocument } from "../models/User";
-import { BookDocument } from "../models/Book";
-import { signToken, AuthenticationError } from "../utils/auth";
+import User, { UserDocument } from "../models/User.js";
+import { BookDocument } from "../models/Book.js";
+import { signToken, AuthenticationError } from "../utils/auth.js";
 
 interface UserArgs {
   userId: string;

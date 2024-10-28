@@ -4,7 +4,7 @@ import type { ChangeEvent, FormEvent } from 'react';
 import { Form, Button, Alert } from 'react-bootstrap';
 
 // import { loginUser } from '../utils/API';
-// import Auth from '../utils/auth';
+import Auth from '../utils/auth';
 import type { User } from '../models/User';
 
 import { useMutation } from '@apollo/client';
@@ -32,11 +32,17 @@ const LoginForm = ({}: { handleModalClose: () => void }) => {
     }
 
     // * Mutation * //
-    const [login, { error }] = useMutation(LOGIN);
+    const [ login ] = useMutation(LOGIN);
 
     try {
       // const response = await loginUser(userFormData);
-      await login(); // ! Variables?
+      const { data } = await login(
+        {
+          variables: { ...userFormData }
+        }
+      );
+      
+      Auth.login(data.login.token);
     } catch (err) {
       console.error(err);
       setShowAlert(true);
