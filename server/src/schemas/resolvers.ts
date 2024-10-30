@@ -1,5 +1,4 @@
 import User, { UserDocument } from "../models/User.js";
-import { BookDocument } from "../models/Book.js";
 import { signToken, AuthenticationError } from "../utils/auth.js";
 
 interface UserArgs {
@@ -11,6 +10,17 @@ interface CreateUserArgs {
     username: string;
     email: string;
     password: string;
+  };
+}
+
+interface BookDocument {
+  book: {
+    bookId: string;
+    title: string;
+    authors: string[];
+    description: string;
+    image: string;
+    link: string;
   };
 }
 
@@ -66,13 +76,13 @@ const resolvers = {
     },
     saveBook: async (
       _parent: any,
-      { bookData }: { bookData: BookDocument },
+      { book }: BookDocument,
       context: Context
     ): Promise<UserDocument | null> => {
       if (context.user) {
-        return await User.findOneAndUpdate(
+        return await User.findByIdAndUpdate(
           { _id: context.user._id },
-          { $addToSet: { books: bookData } },
+          { $addToSet: { savedBooks: book } },
           {
             new: true,
             runValidators: true,
