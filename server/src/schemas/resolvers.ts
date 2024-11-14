@@ -80,6 +80,7 @@ const resolvers = {
       context: Context
     ): Promise<UserDocument | null> => {
       if (context.user) {
+        console.log(context);
         return await User.findByIdAndUpdate(
           { _id: context.user._id },
           { $addToSet: { savedBooks: book } },
